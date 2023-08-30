@@ -1,0 +1,240 @@
+Database creation
+CREATE SCHEMA `hotel_db` ;
+
+
+CREATION OF TABLES:
+CREATE TABLE `hotel_db`.`customer` (
+  `Aadhar_id` INT NOT NULL,
+  `Name` VARCHAR(45) NOT NULL,
+  `E-mail` VARCHAR(45) NOT NULL,
+  `P_no` INT NULL,
+  PRIMARY KEY (`Aadhar_id`));
+
+CREATE TABLE `hotel_db`.`admin` (
+  `Admin_Id` INT NOT NULL,
+  `name` VARCHAR(45) NOT NULL,
+  `Age` INT NOT NULL,
+  `Start_date` DATE NOT NULL,
+  PRIMARY KEY (`Admin_Id`));
+
+
+CREATE TABLE `hotel_db`.`booking` (
+  `Booking_Id` INT NOT NULL,
+  `S_date` DATE NULL,
+  `Aadhar_id` INT NULL,
+  `Admin_Id` INT NULL,
+  PRIMARY KEY (`Booking_Id`),
+  INDEX `Aadhar_Id_idx` (`Aadhar_id` ASC) VISIBLE,
+  INDEX `Admin_Id_idx` (`Admin_Id` ASC) VISIBLE,
+  CONSTRAINT `Aadhar_Id`
+    FOREIGN KEY (`Aadhar_id`)
+    REFERENCES `hotel_db`.`customer` (`Aadhar_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `Admin_Id`
+    FOREIGN KEY (`Admin_Id`)
+    REFERENCES `hotel_db`.`admin` (`Admin_Id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION);
+
+CREATE TABLE `hotel_db`.`hotel` (
+  `Branch_id` INT NOT NULL,
+  `Name` VARCHAR(45) NOT NULL,
+  `Address` VARCHAR(45) NULL,
+  `H_id` INT NOT NULL,
+  PRIMARY KEY (`Branch_id`));
+
+
+CREATE TABLE `hotel_db`.`rooms` (
+  `Room_no` INT NOT NULL,
+  `Hotel_id` INT NOT NULL,
+  `TOR` VARCHAR(45) NOT NULL,
+  `Cus_id` INT NOT NULL,
+  `Branch_id` INT NULL,
+  PRIMARY KEY (`Room_no`),
+  INDEX `Branch_id_idx` (`Branch_id` ASC) VISIBLE,
+  CONSTRAINT `Branch_id`
+    FOREIGN KEY (`Branch_id`)
+    REFERENCES `hotel_db`.`hotel` (`Branch_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION);
+
+
+CREATE TABLE `hotel_db`.`payment` (
+  `payment_id` INT NOT NULL,
+  `Status` VARCHAR(45) NOT NULL,
+  `Aadhar_id` INT NOT NULL,
+  PRIMARY KEY (`payment_id`),
+  INDEX `Aadhar_id_idx` (`Aadhar_id` ASC) VISIBLE,
+  CONSTRAINT `Aadhar_id`
+    FOREIGN KEY (`Aadhar_id`)
+    REFERENCES `hotel_db`.`customer` (`Aadhar_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION);
+
+CREATE TABLE `hotel_db`.`bill` (
+  `bill_id` INT NOT NULL,
+  `Amt` INT NOT NULL,
+  `payment_id` INT NULL,
+  PRIMARY KEY (`bill_id`),
+  INDEX `payment_id_idx` (`payment_id` ASC) VISIBLE,
+  CONSTRAINT `payment_id`
+    FOREIGN KEY (`payment_id`)
+    REFERENCES `hotel_db`.`payment` (`payment_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION);
+
+
+CREATE TABLE `hotel_db`.`books` (
+  `BA_Id` INT NOT NULL,
+  `B_id` INT NOT NULL,
+  PRIMARY KEY (`BA_Id`, `B_id`),
+  CONSTRAINT `BA_id`
+    FOREIGN KEY (`BA_Id`)
+    REFERENCES `hotel_db`.`customer` (`Aadhar_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `B_id`
+    FOREIGN KEY (`BA_Id` , `B_id`)
+    REFERENCES `hotel_db`.`booking` (`Aadhar_id` , `Booking_Id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION);
+
+Population of the database:
+INSERT INTO `hotel_db`.`customer` (`Aadhar_id`, `Name`, `E-mail`, `P_no`) VALUES ('30645502', 'Joshua', 'joshua@gmail.com', '23456');
+INSERT INTO `hotel_db`.`customer` (`Aadhar_id`, `Name`, `E-mail`, `P_no`) VALUES ('30397150', 'Vernon', 'vernon@gmail.com', '98805');
+INSERT INTO `hotel_db`.`customer` (`Aadhar_id`, `Name`, `E-mail`, `P_no`) VALUES ('30918049', 'Arjun', 'arjun@gmail.com', '23456');
+INSERT INTO `hotel_db`.`customer` (`Aadhar_id`, `Name`, `E-mail`, `P_no`) VALUES ('40349981', 'Gyu', 'gyu@gmail.com', '67895');
+
+
+INSERT INTO `hotel_db`.`admin` (`Admin_Id`, `name`, `Age`, `Start_date`) VALUES ('481', 'Jun', '35', '2002-05-22');
+INSERT INTO `hotel_db`.`admin` (`Admin_Id`, `name`, `Age`, `Start_date`) VALUES ('281', 'RM', '38', '2005-08-16');
+INSERT INTO `hotel_db`.`admin` (`Admin_Id`, `name`, `Age`, `Start_date`) VALUES ('381', 'Woozi', '40', '2002-02-24');
+INSERT INTO `hotel_db`.`admin` (`Admin_Id`, `name`, `Age`, `Start_date`) VALUES ('560', 'Harry', '34', '2003-06-12');
+
+
+UPDATE `hotel_db`.`booking` SET `Admin_Id` = '481' WHERE (`Booking_Id` = '35');
+
+
+INSERT INTO `hotel_db`.`hotel` (`Branch_id`, `Name`, `Address`, `H_id`) VALUES ('560036', 'Marina', 'Airportroad', '20');
+INSERT INTO `hotel_db`.`hotel` (`Branch_id`, `Name`, `Address`, `H_id`) VALUES ('560043', 'Shoyo', 'Jayanagar', '30');
+INSERT INTO `hotel_db`.`hotel` (`Branch_id`, `Name`, `Address`, `H_id`) VALUES ('560047', 'fukima', 'Malleshwaram', '35');
+INSERT INTO `hotel_db`.`hotel` (`Branch_id`, `Name`, `Address`, `H_id`) VALUES ('560053', 'Tanjiro', 'Electroniccity', '46');
+
+INSERT INTO `hotel_db`.`rooms` (`Room_no`, `Hotel_id`, `TOR`, `Cus_id`, `Branch_id`) VALUES ('203', '100', 'single', '67', '560036');
+INSERT INTO `hotel_db`.`rooms` (`Room_no`, `Hotel_id`, `TOR`, `Cus_id`, `Branch_id`) VALUES ('303', '105', 'double', '56', '560043');
+INSERT INTO `hotel_db`.`rooms` (`Room_no`, `Hotel_id`, `TOR`, `Cus_id`, `Branch_id`) VALUES ('456', '222', 'triple', '41', '560047');
+
+INSERT INTO `hotel_db`.`payment` (`payment_id`, `Status`, `PA_id`) VALUES ('24', 'paid', '30397150');
+INSERT INTO `hotel_db`.`payment` (`payment_id`, `Status`, `PA_id`) VALUES ('25', 'notpaid', '30918049');
+INSERT INTO `hotel_db`.`payment` (`payment_id`, `Status`, `PA_id`) VALUES ('26', 'pending', '40349981');
+
+
+INSERT INTO `hotel_db`.`bill` (`bill_id`, `Amt`, `payment_id`) VALUES ('2202', '2000', '24');
+INSERT INTO `hotel_db`.`bill` (`bill_id`, `Amt`, `payment_id`) VALUES ('2454', '3000', '26');
+INSERT INTO `hotel_db`.`bill` (`bill_id`, `Amt`) VALUES ('2593', '2300');
+
+INSERT INTO `hotel_db`.`books` (`BA_Id`, `B_id`) VALUES ('30645502', '30');
+INSERT INTO `hotel_db`.`books` (`BA_Id`, `B_id`) VALUES ('30397150', '26');
+
+
+JOIN OPERATIONS:
+1.SELECT Booking_id FROM customer NATURAL JOIN booking; 
+2.SELECT Aadhar_id,Name FROM customer NATURAL JOIN booking;
+3.SELECT Name,age FROM admin NATURAL JOIN booking; 
+4. SELECT Hotel_id,TOR,Cus_id,Room_no FROM rooms NATURAL JOIN hotel
+
+ALTER TABLE FUNCTIONS
+1.ALTER TABLE `hotel_db`.`admin` 
+ADD COLUMN `Working_hours` INT NOT NULL AFTER `Start_date`,
+ADD COLUMN `Salary` INT NOT NULL AFTER `Working_hours`;
+
+2.INSERT INTO `hotel_db`.`admin` (`Admin_Id`, `name`, `Age`, `Start_date`, `Working_hours`, `Salary`) VALUES ('681', 'Ron', '40', '2005-05-14', '12', '10000');
+UPDATE `hotel_db`.`admin` SET `Working_hours` = '7', `Salary` = '30000' WHERE (`Admin_Id` = '281');
+UPDATE `hotel_db`.`admin` SET `Working_hours` = '8', `Salary` = '15000' WHERE (`Admin_Id` = '381');
+UPDATE `hotel_db`.`admin` SET `Working_hours` = '3', `Salary` = '20000' WHERE (`Admin_Id` = '481');
+UPDATE `hotel_db`.`admin` SET `Working_hours` = '5', `Salary` = '16000' WHERE (`Admin_Id` = '560');
+INSERT INTO `hotel_db`.`admin` (`Admin_Id`, `name`, `Age`, `Start_date`, `Working_hours`, `Salary`) VALUES ('783', 'Percy', '50', '2005-08-13', '6', '12000');
+
+UPDATE `hotel_db`.`rooms` SET `Price` = '2000' WHERE (`Room_no` = '203');
+UPDATE `hotel_db`.`rooms` SET `Price` = '3000' WHERE (`Room_no` = '303');
+UPDATE `hotel_db`.`rooms` SET `Price` = '4000' WHERE (`Room_no` = '456');
+INSERT INTO `hotel_db`.`rooms` (`Room_no`, `Hotel_id`, `TOR`, `Cus_id`, `Price`) VALUES ('390', '456', 'special', '89', '5000');
+INSERT INTO `hotel_db`.`rooms` (`Room_no`, `Hotel_id`, `TOR`, `Cus_id`, `Price`) VALUES ('897', '234', 'vacation', '45', '7000');
+
+
+AGGREGATE FUNCTIONS
+1.SELECT AVG(Salary) 
+FROM admin
+2.SELECT AVG(Working_hours) 
+FROM admin
+3.SELECT MIN(price) 
+FROM rooms
+3.SELECT AVG(price) 
+FROM rooms
+
+SET OPERATIONS
+1.SELECT * FROM customer
+WHERE Aadhar_id IN (SELECT Aadhar_id FROM booking);
+2.SELECT payment_id,Status FROM payment
+UNION
+SELECT payment_id,status FROM bill;
+
+3.SELECT customer.Aadhar_id
+FROM customer
+WHERE customer.Aadhar_id IN (SELECT booking.Aadhar_id FROM booking);
+
+FUNCTIONS
+1.
+DELIMITER //
+
+CREATE FUNCTION no_of_years(date1 date) RETURNS int DETERMINISTIC
+BEGIN
+ DECLARE date2 DATE;
+  Select current_date()into date2;
+  RETURN year(date2)-year(date1);
+END 
+
+//
+
+DELIMITER 
+Select name, age, Admin_id, no_of_years(Start_date) as 'years' from admin;
+2.Stored procedure
+DELIMITER //
+CREATE PROCEDURE sp_GetCustomers()
+BEGIN
+    select Aadhar_id,Name,P_no from customer;
+END //
+    
+DELIMITER ;
+CALL sp_GetCustomers()
+
+
+TRIGGER
+delimiter //
+CREATE TRIGGER person_bi BEFORE INSERT
+ON customer
+FOR EACH ROW
+IF NEW.Age < 18 THEN
+SIGNAL SQLSTATE '50001' SET MESSAGE_TEXT = 'Person must be older than 18.';
+END IF; //
+delimiter ;
+
+
+DELIMITER $$
+CREATE TRIGGER backupr
+BEFORE DELETE ON rooms
+FOR EACH ROW
+BEGIN
+INSERT INTO backuprooms
+SELECT * FROM rooms
+WHERE rooms.Hotel_id=OLD.Hotel_id;
+END $$
+DELIMITER ;
+
+
+DELETE FROM rooms WHERE Hotel_id='100';
+
+
+
+
